@@ -1,0 +1,6 @@
+{
+    "dev": {
+        "app_function": "app.app", 
+        "s3_bucket": "knn-eatme-zappa"
+    }
+}
