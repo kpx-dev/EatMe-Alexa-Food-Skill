@@ -36,4 +36,12 @@ Alexa: Try Glee Donuts and Burgers, located at 9475 Heil Ave, Ste A, Fountain Va
 
   # copy the sample .env file
   cp env-sample .env
+
+  # start the services
+  python app.py
+
+  # start ngrok to have an https endpoint
+  ngrok http 5000
+
+  # copy and paste that https url at Alexa Skill UI to test
 ```

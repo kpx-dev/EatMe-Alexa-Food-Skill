@@ -20,6 +20,7 @@ def launch():
 
     return statement(welcome_text)
 
+
 @ask.intent('AMAZON.HelpIntent')
 def help():
     help_text = render_template('help')
