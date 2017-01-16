@@ -1,0 +1,2 @@
+EatMeIntent for a place to eat
+EatMeIntent random
