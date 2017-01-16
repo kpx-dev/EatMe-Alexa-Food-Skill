@@ -1,7 +1,8 @@
 # EatMe - Alexa Food Skill
 EatMe is an Alexa Food Skill that allow you to find good random place to eat near you, quickly. It's powered by Yelp.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/CJoA8alJ-K0" frameborder="0" allowfullscreen></iframe>
+## Video Demo
+[![EatMe Demo ](http://img.youtube.com/vi/CJoA8alJ-K0/0.jpg)](http://www.youtube.com/watch?v=CJoA8alJ-K0)
 
 ## Alexa Commands
 
