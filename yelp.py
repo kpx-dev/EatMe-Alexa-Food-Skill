@@ -1,6 +1,5 @@
 import requests
 import random
-from urllib.parse import quote
 
 class Yelp(object):
 
@@ -15,7 +14,7 @@ class Yelp(object):
         }
 
     def request(self, path, url_params={}):
-        url = '{0}{1}'.format(self.host, quote(path.encode('utf8')))
+        url = '{0}{1}'.format(self.host, path.encode('utf8'))
         headers = {
             'Authorization': 'Bearer %s' % self.app_access_token,
         }

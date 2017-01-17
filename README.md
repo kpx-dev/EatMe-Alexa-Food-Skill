@@ -45,3 +45,16 @@ Alexa: Try Glee Donuts and Burgers, located at 9475 Heil Ave, Ste A, Fountain Va
 
   # copy and paste that https url at Alexa Skill UI to test
 ```
+
+## Deploy
+
+This service uses Zappa to deploy to AWS Lambda
+
+```shell
+  # deploy to the dev environment
+  zappa deploy dev
+
+  # tail the log to debug
+  zappa tail dev
+
+```
