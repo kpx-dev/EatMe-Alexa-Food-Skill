@@ -6,6 +6,7 @@ import os
 import logging
 from flask import Flask, render_template
 from flask_ask import Ask, statement, question
+from flask_ask.verifier import VerificationError
 from dotenv import load_dotenv, find_dotenv
 from yelp import Yelp
 from flask_dotenv import DotEnv
@@ -54,7 +55,7 @@ def yelp():
 
     biz = yelp.run(term='restaurant', location='92683')
     miles = int(biz['distance'] / 1609.344)
-    print(biz)
+    # print(biz)
     statement_text = render_template('answer',
         name=biz['name'],
         stars=biz['rating'],
@@ -67,6 +68,15 @@ def yelp():
 
     return statement(statement_text).simple_card("Eat Me", statement_text)
 
+
+@app.route('/')
+def healthcheck():
+    return 'ok'
+
+
+@app.errorhandler(VerificationError)
+def failed_verification(error):
+    return str(error), 401
 
 def main():
     app.run()
