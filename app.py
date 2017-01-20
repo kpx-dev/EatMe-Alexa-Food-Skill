@@ -8,10 +8,14 @@ from flask import Flask, render_template
 from flask_ask import Ask, statement, question
 from dotenv import load_dotenv, find_dotenv
 from yelp import Yelp
-load_dotenv(find_dotenv())
+from flask_dotenv import DotEnv
 
+load_dotenv(find_dotenv())
 app = Flask(__name__)
 ask = Ask(app, '/')
+env = DotEnv()
+env.init_app(app)
+
 logging.getLogger(__name__).setLevel(logging.DEBUG)
 
 @ask.launch
