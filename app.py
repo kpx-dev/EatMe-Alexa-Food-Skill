@@ -22,9 +22,9 @@ logging.getLogger(__name__).setLevel(logging.DEBUG)
 @ask.launch
 def launch():
     welcome_text = render_template('welcome')
+    welcome_repeat_text = render_template('welcome_repeat')
 
-    return statement(welcome_text)
-
+    return question(welcome_text).reprompt(welcome_repeat_text).simple_card('Eat Me', welcome_text)
 
 @ask.intent('AMAZON.HelpIntent')
 def help():
@@ -39,6 +39,7 @@ def stop():
     bye_text = render_template('bye')
 
     return statement(bye_text)
+
 
 @ask.session_ended
 def session_ended():
@@ -77,6 +78,11 @@ def healthcheck():
 @app.errorhandler(VerificationError)
 def failed_verification(error):
     return str(error), 401
+
+
+@app.errorhandler(Exception)
+def global_exception(error):
+    return json.dumps({"response": {"shouldEndSession": True}, "sessionAttributes": {}, "version": "1.0"}), 200
 
 def main():
     app.run()
