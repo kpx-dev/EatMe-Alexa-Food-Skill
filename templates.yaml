@@ -1,15 +1,18 @@
 welcome: |
-    Eat Me will help you find a good random place to eat. You can say: Alexa, ask Eat Me where to eat?
+  Eat Me will help you find a good random place to eat. You can say: Find me a random place to eat.
+
+welcome_repeat: |
+  You can also say: random.
 
 help: |
-    Eat Me will help you find a good random place to eat. You can say: Alexa, ask Eat Me where to eat?
+  Eat Me will help you find a good random place to eat. You can say: Alexa, ask Eat Me where to eat?
 
 zip: What's your current zip code?
 
 answer: |
-    Try {{ name }} with {{ stars }} stars rating, {{ reviews }} reviews, {{ miles }} miles from you.
-    Again, the place name is {{ name }}. Address is {{ address }}.
-    You can see this address again in the Alexa App.
+  Try {{ name }} with {{ stars }} stars rating, {{ reviews }} reviews, {{ miles }} miles from you.
+  Again, the place name is {{ name }}. Address is {{ address }}.
+  You can see this address again in the Alexa App.
 
 phone: What's your phone number?
 

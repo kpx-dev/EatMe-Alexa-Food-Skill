@@ -6,6 +6,7 @@ import os
 import logging
 from flask import Flask, render_template
 from flask_ask import Ask, statement, question
+from flask_ask.verifier import VerificationError
 from dotenv import load_dotenv, find_dotenv
 from yelp import Yelp
 from flask_dotenv import DotEnv
@@ -21,9 +22,9 @@ logging.getLogger(__name__).setLevel(logging.DEBUG)
 @ask.launch
 def launch():
     welcome_text = render_template('welcome')
+    welcome_repeat_text = render_template('welcome_repeat')
 
-    return statement(welcome_text)
-
+    return question(welcome_text).reprompt(welcome_repeat_text).simple_card('Eat Me', welcome_text)
 
 @ask.intent('AMAZON.HelpIntent')
 def help():
@@ -38,6 +39,7 @@ def stop():
     bye_text = render_template('bye')
 
     return statement(bye_text)
+
 
 @ask.session_ended
 def session_ended():
@@ -54,7 +56,7 @@ def yelp():
 
     biz = yelp.run(term='restaurant', location='92683')
     miles = int(biz['distance'] / 1609.344)
-    print(biz)
+    # print(biz)
     statement_text = render_template('answer',
         name=biz['name'],
         stars=biz['rating'],
@@ -67,6 +69,20 @@ def yelp():
 
     return statement(statement_text).simple_card("Eat Me", statement_text)
 
+
+@app.route('/')
+def healthcheck():
+    return 'ok'
+
+
+@app.errorhandler(VerificationError)
+def failed_verification(error):
+    return str(error), 401
+
+
+@app.errorhandler(Exception)
+def global_exception(error):
+    return json.dumps({"response": {"shouldEndSession": True}, "sessionAttributes": {}, "version": "1.0"}), 200
 
 def main():
     app.run()
