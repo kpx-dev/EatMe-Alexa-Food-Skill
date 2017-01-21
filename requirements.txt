@@ -1,15 +1,15 @@
 aniso8601==1.2.0
 argcomplete==1.7.0
 base58==0.2.4
-boto3==1.4.3
-botocore==1.4.93
+boto3==1.4.2
+botocore==1.4.87
 cffi==1.9.1
 click==6.7
 cryptography==1.7.1
 docutils==0.13.1
 enum34==1.1.6
 Flask==0.12
--e git://github.com/kienpham2000/flask-ask.git@dafe3c81c3dcf07a4dd43729043c77fc5c3b435e#egg=Flask_Ask
+Flask-Ask==0.8.6
 Flask-DotEnv==0.1.0
 futures==3.0.5
 hjson==2.0.2
@@ -19,7 +19,7 @@ itsdangerous==0.24
 Jinja2==2.9.4
 jmespath==0.9.0
 kappa==0.6.0
-lambda-packages==0.12.0
+lambda-packages==0.11.0
 MarkupSafe==0.23
 placebo==0.8.1
 pyasn1==0.1.9
@@ -33,7 +33,7 @@ requests==2.12.4
 s3transfer==0.1.10
 six==1.10.0
 toml==0.9.2
-tqdm==4.11.0
+tqdm==4.10.0
 troposphere==1.9.1
 Unidecode==0.4.20
 Werkzeug==0.11.11
