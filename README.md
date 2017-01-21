@@ -6,15 +6,13 @@ EatMe is an Alexa Food Skill that allow you to find good random place to eat nea
 
 ## Alexa Commands
 
-You: Alexa, Enable the EatMe skill
+**You**: Alexa, Enable the EatMe skill
 
-You: Alexa, ask Eat Me where to eat?
+**You**: Alexa, ask Eat Me where to eat?
 
-Alexa: Try Glee Donuts and Burgers with 5 stars rating, 719 reviews, 3 miles from you.
+**Alexa**: Try Glee Donuts and Burgers with 5 stars rating, 719 reviews, 3 miles from you.
 Again, the place name is Glee Donuts and Burgers. Address is 9475 Heil Ave
 Ste A, Fountain Valley, CA 92708
-
-Alexa: Try Glee Donuts and Burgers, located at 9475 Heil Ave, Ste A, Fountain Valley, CA 92708
 
 ## How to make EatMe better?
 
