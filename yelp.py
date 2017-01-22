@@ -1,6 +1,7 @@
 import requests
 import random
 
+
 class Yelp(object):
 
     def __init__(self, app_id, app_secret, app_access_token):
@@ -9,7 +10,7 @@ class Yelp(object):
         self.app_access_token = app_access_token
         self.host = 'https://api.yelp.com'
         self.default = {
-            'radius': 16093, # meters, 10 miles
+            'radius': 16093,  # meters, 10 miles
             'limit': 40
         }
 
@@ -20,11 +21,10 @@ class Yelp(object):
         }
 
         print('Querying {0} ...'.format(url))
-
-        response = requests.request('GET', url, headers=headers, params=url_params)
+        response = requests.request('GET', url, headers=headers,
+                                    params=url_params)
 
         return response.json()
-
 
     def search(self, term, location):
         path = '/v3/businesses/search'
@@ -38,7 +38,7 @@ class Yelp(object):
             'categories': 'food',
             # 'attributes': 'cashback'
             # hot_and_new - Hot and New businesses
-            # request_a_quote - Businesses that have the Request a Quote feature
+            # request_a_quote - Businesses have the Request a Quote feature
             # waitlist_reservation - Businesses that have an online waitlist
             # cashback - Businesses that offer Cash Back
             # deals - Businesses that offer Deals
@@ -46,10 +46,8 @@ class Yelp(object):
 
         return self.request(path, url_params=url_params)
 
-
-    def get_business(self, business_id):
-        return request('/v3/businesses/{}'.format(business_id))
-
+    # def get_business(self, business_id):
+    #     return request('/v3/businesses/{}'.format(business_id))
 
     def run(self, term, location):
         response = self.search(term, location)

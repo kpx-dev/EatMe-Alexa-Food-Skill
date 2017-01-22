@@ -1,7 +1,4 @@
-import argparse
 import json
-import pprint
-import sys
 import os
 import logging
 from flask import Flask, render_template
@@ -19,18 +16,23 @@ env.init_app(app)
 
 logging.getLogger(__name__).setLevel(logging.DEBUG)
 
+
 @ask.launch
 def launch():
     welcome_text = render_template('welcome')
     welcome_repeat_text = render_template('welcome_repeat')
 
-    return question(welcome_text).reprompt(welcome_repeat_text).simple_card('Eat Me', welcome_text)
+    return question(welcome_text).reprompt(welcome_repeat_text).simple_card(
+        'Eat Me', welcome_text)
+
 
 @ask.intent('AMAZON.HelpIntent')
 def help():
     help_text = render_template('help')
+    welcome_repeat_text = render_template('welcome_repeat')
 
-    return statement(help_text)
+    return question(help_text).reprompt(welcome_repeat_text).simple_card(
+        'Eat Me', help_text)
 
 
 @ask.intent('AMAZON.StopIntent')
@@ -57,7 +59,8 @@ def yelp():
     biz = yelp.run(term='restaurant', location='92683')
     miles = int(biz['distance'] / 1609.344)
     # print(biz)
-    statement_text = render_template('answer',
+    statement_text = render_template(
+        'answer',
         name=biz['name'],
         stars=biz['rating'],
         reviews=biz['review_count'],
@@ -77,12 +80,15 @@ def healthcheck():
 
 @app.errorhandler(VerificationError)
 def failed_verification(error):
-    return str(error), 401
+    return str(error), 400
 
 
 @app.errorhandler(Exception)
 def global_exception(error):
-    return json.dumps({"response": {"shouldEndSession": True}, "sessionAttributes": {}, "version": "1.0"}), 200
+    return json.dumps({
+        "response": {"shouldEndSession": True},
+        "sessionAttributes": {}, "version": "1.0"}), 200
+
 
 def main():
     app.run()
