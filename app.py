@@ -15,7 +15,7 @@ env = DotEnv()
 env.init_app(app)
 
 logging.getLogger(__name__).setLevel(logging.DEBUG)
-
+app_name = 'Eat Me'
 
 @ask.launch
 def launch():
@@ -23,7 +23,7 @@ def launch():
     welcome_repeat_text = render_template('welcome_repeat')
 
     return question(welcome_text).reprompt(welcome_repeat_text).simple_card(
-        'Eat Me', welcome_text)
+        app_name, welcome_text)
 
 
 @ask.intent('AMAZON.HelpIntent')
@@ -32,7 +32,7 @@ def help():
     welcome_repeat_text = render_template('welcome_repeat')
 
     return question(help_text).reprompt(welcome_repeat_text).simple_card(
-        'Eat Me', help_text)
+        app_name, help_text)
 
 
 @ask.intent('AMAZON.StopIntent')
@@ -41,11 +41,6 @@ def stop():
     bye_text = render_template('bye')
 
     return statement(bye_text)
-
-
-@ask.session_ended
-def session_ended():
-    return "", 200
 
 
 @ask.intent('EatMeIntent')
@@ -68,14 +63,20 @@ def yelp():
         address=', '.join(biz['location']['display_address'])
     )
     statement_text = statement_text.replace('&', 'and')
+    next_statement = render_template('answer_repeat')
     print(statement_text)
 
-    return statement(statement_text).simple_card("Eat Me", statement_text)
+    return question(statement_text).reprompt(next_statement).simple_card(app_name, statement_text)
 
 
 @app.route('/')
 def healthcheck():
     return 'ok'
+
+
+@ask.session_ended
+def session_ended():
+    return statement('')
 
 
 @app.errorhandler(VerificationError)
@@ -85,13 +86,12 @@ def failed_verification(error):
 
 @app.errorhandler(Exception)
 def global_exception(error):
-    return json.dumps({
-        "response": {"shouldEndSession": True},
-        "sessionAttributes": {}, "version": "1.0"}), 200
+    return statement('')
 
 
 def main():
     app.run()
+
 
 if __name__ == '__main__':
     main()

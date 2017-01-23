@@ -36,6 +36,7 @@ class Yelp(object):
             'radius': self.default['radius'],
             'open_now': True,
             'categories': 'food',
+            'sort_by': 'rating' #  best_match, rating, review_count or distance
             # 'attributes': 'cashback'
             # hot_and_new - Hot and New businesses
             # request_a_quote - Businesses have the Request a Quote feature
@@ -52,9 +53,14 @@ class Yelp(object):
     def run(self, term, location):
         response = self.search(term, location)
         businesses = response.get('businesses')
-        random.shuffle(businesses)
 
-        return businesses[0]
+        # get the top half:
+        best_biz = businesses[0:self.default['limit'] / 2]
+        random.shuffle(best_biz)
+
+        return best_biz[0]
+        # random.shuffle(businesses)
+        # return businesses[0]
 
         # if not businesses:
         #     print(u'No businesses for {0} in {1} found.'.format(term, location))
