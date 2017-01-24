@@ -11,7 +11,7 @@ zip: What's your current zip code?
 
 answer: |
   Try {{ name }} with {{ stars }} stars, {{ reviews }} reviews, about {{ miles }} miles.
-  Again, it's {{ name }}, {{ address }}. Open Alexa App to see address again.
+  Again, it's {{ name }}, {{ address }}. Open Alexa App to see address again. Say next for next random restaurant.
 
 answer_repeat: |
   Say next for next random restaurant, or stop to end.
