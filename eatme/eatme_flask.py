@@ -81,11 +81,13 @@ def session_ended():
 
 @app.errorhandler(VerificationError)
 def failed_verification(error):
+    print(error)
     return str(error), 400
 
 
 @app.errorhandler(Exception)
 def global_exception(error):
+    print(error)
     return statement('')
 
 

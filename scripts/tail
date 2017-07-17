@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+app_name='eatme'
+region='us-east-1'
+
+awslogs get /aws/lambda/$app_name ALL --watch --aws-region=$region

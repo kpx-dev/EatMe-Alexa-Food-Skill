@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: eatme lambda
+
+Resources:
+  lambda:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: eatme
+      Handler: eatme.eatme.main
+      Runtime: python3.6
+      CodeUri: .
+      Description: eatme lambda
+      MemorySize: 128
+      Timeout: 15
+      Policies: AmazonDynamoDBFullAccess
+      KmsKeyArn: arn:aws:kms:us-east-1:781704289118:key/2fa2d14a-6967-47d9-a4b9-6e6aaba60354
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref Table
+          YELP_APP_ID: AQICAHg5ek5xd5rRTNf9hEk/djRxX+053xLFRyUkkO1j/fYFVgFFGwPdL1tYE6QFjnJjtGuoAAAAdDByBgkqhkiG9w0BBwagZTBjAgEAMF4GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMtGS9ZudWe+vyuzZWAgEQgDG6GLihxnnjStRZQW3F9KZELG6wWVwb5AselwL62Vsgg5b91Agl2JwYED6jwtZ+bHrg
+          YELP_APP_SECRET: AQICAHg5ek5xd5rRTNf9hEk/djRxX+053xLFRyUkkO1j/fYFVgE/KKnvE1M+JpLxc/MWGyvlAAAAojCBnwYJKoZIhvcNAQcGoIGRMIGOAgEAMIGIBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLiyo1i6tjnKEdJg2QIBEIBbHWauxFKLs9PjA3kPMMg8XxmP76Qq5xE83ilRPscUKuHqEEEmYKuM/biYhPZv2UBEfzeZKjMLAla7EVgjHVF1+zdIpH5M1zZFkhZRkdhytTGYX/kCbPiE+Vp1Qg==
+          YELP_ACCESS_TOKEN: AQICAHg5ek5xd5rRTNf9hEk/djRxX+053xLFRyUkkO1j/fYFVgFnYkywOdat7/W5z7v+Phh0AAAA4zCB4AYJKoZIhvcNAQcGoIHSMIHPAgEAMIHJBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDNyyDQXee5+1e001wAIBEICBmyngm+uADMa7sNBiacEqwu10P0cAEQWLYndoz8gSD5tTxM6WMjxBB+Be+ZqHcXai+Zx1ZD5DvOlMcwzZ/0OxLSpm4sNoZyZuav3oK4nD3tsD+1bu0JgXej06Jov5GHQcduEfHp44YQk3RHFFBflTQwFHPYZNiExX9KvP7fsiydl1l6nUReViy8n9MqLvmGpMwQijNOWyC1fHkMQJ
+          SLACK_WEBHOOK: AQICAHg5ek5xd5rRTNf9hEk/djRxX+053xLFRyUkkO1j/fYFVgGFFMVCkG3bqQCd45+i8jtRAAAAsDCBrQYJKoZIhvcNAQcGoIGfMIGcAgEAMIGWBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDDhBnOwEH0J+VTdpbAIBEIBpWjH3YLyJoMyB9890w9ZD4hjirIiGkRclpUyeQjxqez6s0IjXBSMBEStHE7KlKkO53LLL8NwZv5GafRYsfW96dhsJckzKn3RCwoATE2kq9y1w/b0oi7OxYk1yN6IW5VXGRnkUjrGlz/dS
+      Events:
+        AlexaSkillEvent:
+          Type: AlexaSkill
+
+        # POSTResource:
+        #   Type: Api
+        #   Properties:
+        #     Path: /
+        #     Method: post
+      #   Timer:
+      #     Type: Schedule
+      #     Properties:
+      #       Schedule: rate(30 minutes)
+
+  Table:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: event_name
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1

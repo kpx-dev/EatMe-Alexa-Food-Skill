@@ -1,10 +1,10 @@
 {
   "intents": [
     {
-      "intent": "EatMeIntent",
+      "intent": "EatMeIntent"
     },
     {
-      "intent": "EatMeNextIntent",
+      "intent": "EatMeNextIntent"
     },
     {
       "intent": "AMAZON.HelpIntent"

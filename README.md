@@ -16,7 +16,7 @@ EatMe is an Alexa Food Skill that allow you to find good random place to eat nea
 Again, the place name is Glee Donuts and Burgers. Address is 9475 Heil Ave
 Ste A, Fountain Valley, CA 92708
 
-## How to make EatMe better?
+## Make EatMe better
 
 ```shell
   # install virtualenv
@@ -26,24 +26,26 @@ Ste A, Fountain Valley, CA 92708
   . env/bin/activate
 
   # install packages
-  pip install -r requirements.txt
+  ./scripts/install
 
   # generate your Yelp Access Token, that token should be good for 180 days
-  curl "https://api.yelp.com/oauth2/token" \
+  curl -X POST -d \
   --form "grant_type=client_credentials" \
   --form "client_id=$CLIENT_ID" \
-  --form "client_secret=$CLIENT_SECRET"
+  --form "client_secret=$CLIENT_SECRET" \
+  "https://api.yelp.com/oauth2/token"
 
   # copy the sample .env file
   cp env-sample .env
 
   # start the services
-  python app.py
+  ./scripts/start
 
   # start ngrok to have an https endpoint
   ngrok http 5000
 
   # copy and paste that https url at Alexa Skill UI to test
+  # https://developer.amazon.com/edw/home.html#/skill/
 ```
 
 ## Deploy
