@@ -152,6 +152,9 @@ def on_session_ended(session_ended_request, session):
 
 
 def main(event, context):
+    print('raw event is: ', event)
+    print('raw context is: ', context)
+
     if not validate_request(event):
         return success(title='Error', message='Error')
 

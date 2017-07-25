@@ -1,8 +1,8 @@
-FROM python:3-alpine
+FROM python:3-jessie
 
-WORKDIR /usr/src/app
+WORKDIR /home
 
-RUN apk update && apk add build-base postgresql-dev libffi-dev openssl-dev
+RUN apt-get update && apt-get install build-essential python-dev libssl1.0.0 libssl-dev -y
 
 COPY requirements.txt ./
 
