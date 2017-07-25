@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
 
-# build
 app_name='eatme'
 aws_region=us-east-1
 s3_bucket=knn-lambda-us-east-1
 
 rm -rf dist
+
+# compile packages under Linux env
+docker build -t $app_name .
+docker run -v "$PWD":/usr/src/app $app_name
+
 mkdir -p dist/$app_name
 
+cp $app_name.py dist/app.py
 cp -R $app_name/ dist/$app_name/
 cp -R $app_name/$app_name.yml dist/
-
-pip install -r requirements.txt -t dist/
 
 # build
 aws cloudformation package --template-file dist/$app_name.yml --output-template-file dist/deploy.yml --s3-bucket $s3_bucket --s3-prefix $app_name --region $aws_region

@@ -1,2 +1,4 @@
+-r requirements.txt
 awslogs==0.8.0
 click==6.7
+pycodestyle
