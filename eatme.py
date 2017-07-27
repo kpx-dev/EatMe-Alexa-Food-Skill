@@ -5,7 +5,7 @@ import os
 import yaml
 
 from eatme.yelp import Yelp
-from eatme.core import success, decrypt, validate_request, card
+from eatme.core import success, decrypt, validate_request, card, zipcode, track
 from pathlib import Path
 
 slack_webhook = decrypt(key=os.environ.get('SLACK_WEBHOOK'))
@@ -14,22 +14,17 @@ yelp_keys = {
     'app_secret': decrypt(key=os.environ.get('YELP_APP_SECRET')),
     'app_access_token': decrypt(key=os.environ.get('YELP_ACCESS_TOKEN'))
 }
-dynamodb_table = os.environ.get('TABLE_NAME')
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table(os.environ.get('TABLE_NAME'))
 eatme_app_id = os.environ.get('EATME_APP_ID')
 
 with Path.cwd().joinpath('eatme/script.yml').open() as f: script = yaml.load(f)
 
 
-def location(event):
-    device_id = event['context']['System']['device']['deviceId']
-    url = 'https://api.amazonalexa.com/v1/devices/{}/settings/address/countryAndPostalCode'.format(device_id)
-    token = event['context']['System']['user']['permissions']['consentToken']
-    header = {'Authorization': 'Bearer {}'.format(token)}
-
-    return requests.get(url, headers=header).json()
-
 def random(event):
-    user_zipcode = location(event)['postalCode'] or '92683'
+    device_id = event['context']['System']['device']['deviceId']
+    token = event['context']['System']['user']['permissions']['consentToken']
+    user_zipcode = zipcode(device_id=device_id, token=token) or '92683'
 
     yelp = Yelp(
         app_id=yelp_keys['app_id'],
@@ -52,6 +47,14 @@ def random(event):
     card_content = script['answer_card_content'].format(name=biz['name'], address=address)
 
     res_card = card(title=card_title, content=card_content, img=biz['image_url'])
+
+    track(
+        table=table,
+        event=event,
+        device_id=device_id,
+        zipcode=user_zipcode,
+        business=biz,
+        speech_text=speech_text, card=res_card, speech_text_reprompt=script['answer_repeat'])
 
     return success(speech_text=speech_text, card=res_card, speech_text_reprompt=script['answer_repeat'])
 
@@ -87,17 +90,13 @@ def on_session_ended(event):
 
 
 def main(event, context):
-    # print('raw event is: ', event)
-    # print('raw context is: ', context)
+    request_timestamp = event['request']['timestamp']
 
-    if not validate_request(event):
+    if not os.environ.get('DEBUG') and not validate_request(event, app_id=eatme_app_id, request_timestamp=request_timestamp):
         raise ValueError("Failed validation")
 
-    # if event['session']['application']['applicationId'] != eatme_app_id:
-    #     raise ValueError("Invalid Application ID: {}".format(event['session']['application']['applicationId']))
-
     # if event['session']['new']:
-    #     return on_session_started({'requestId': event['request']['requestId']}, event['session'])
+    #     return on_session_started(event)
 
     if event['request']['type'] == "LaunchRequest":
         return on_launch(event)

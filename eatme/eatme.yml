@@ -26,12 +26,7 @@ Resources:
       Events:
         AlexaSkillEvent:
           Type: AlexaSkill
-
-        # POSTResource:
-        #   Type: Api
-        #   Properties:
-        #     Path: /
-        #     Method: post
+      # TODO: warm up lambda?
       #   Timer:
       #     Type: Schedule
       #     Properties:
@@ -41,7 +36,7 @@ Resources:
     Type: AWS::Serverless::SimpleTable
     Properties:
       PrimaryKey:
-        Name: event_name
+        Name: request_id
         Type: String
       ProvisionedThroughput:
         ReadCapacityUnits: 1

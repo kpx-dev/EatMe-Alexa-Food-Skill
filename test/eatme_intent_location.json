@@ -17,7 +17,7 @@
         "requestId": "EdwRequestId.beba2d7b-321b-4f84-a5e3-effd508c7c5e",
         "locale": "en-US",
         "type": "IntentRequest",
-        "timestamp": 1500274514095,
+        "timestamp": "2017-07-27T05:21:02Z",
         "intent": {
             "name": "EatMeIntent",
             "slots": {}

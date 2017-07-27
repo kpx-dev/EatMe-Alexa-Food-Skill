@@ -1,6 +1,9 @@
 import boto3
 import json
 import requests
+import time
+import aniso8601
+import requests
 from base64 import b64decode
 from OpenSSL import crypto
 from datetime import datetime
@@ -93,47 +96,93 @@ def _response(speechlet, session_attributes={}):
         'response': speechlet
     }
 
-def validate_request(request):
+
+def zipcode(device_id, token):
+    url = 'https://api.amazonalexa.com/v1/devices/{}/settings/address/countryAndPostalCode'.format(device_id)
+    header = {'Authorization': 'Bearer {}'.format(token)}
+
+    try:
+        res = requests.get(url, headers=header).json()
+        # print('zip code detected is ', res['postalCode'])
+
+        return res['postalCode']
+    except:
+        return None
+
+
+def track(table, event, business, zipcode='0', **kwargs):
+    print('tracking request....')
+
+
+    item = {
+        'request_id': event['request']['requestId'],
+        'date': event['request']['timestamp'],
+        'user_id': event['session']['user']['userId'],
+        'device_id': kwargs.get('device_id') or event['context']['System']['device']['deviceId'],
+        'event': event,
+        'zipcode': zipcode,
+        'business_name': business['name'],
+        'business': json.dumps(business),
+        'speech_text': kwargs.get('speech_text', '_'),
+        'speech_text_reprompt': kwargs.get('speech_text_reprompt', '_'),
+        'card': kwargs.get('card', {})
+    }
+
+    res = table.put_item(Item=item)
+    print('track res ', res)
+
+    return res
+
+def validate_request(event, app_id, request_timestamp):
+    if _validate_app_id(source=event['session']['application']['applicationId'], expected=app_id) and _validate_timestamp(timestamp=request_timestamp):
+        return True
+
+    return False
     # _validate_cert()
     # _validate_signature()
-    # _validate_timestamp()
-
-    return True
 
 
-def _validate_cert(cert_url):
-    cert_data = requests.get(cert_url)
-    cert = crypto.load_certificate(crypto.FILETYPE_PEM, cert_data)
-
-    not_after = cert.get_notAfter().decode('utf-8')
-    not_after = datetime.strptime(not_after, '%Y%m%d%H%M%SZ')
-    if datetime.utcnow() >= not_after:
-        return False
-
-    found = False
-    for i in range(0, cert.get_extension_count()):
-        extension = cert.get_extension(i)
-        short_name = extension.get_short_name().decode('utf-8')
-        value = str(extension)
-        if 'subjectAltName' == short_name and 'DNS:echo-api.amazon.com' == value:
-            found = True
-            break
-
-    if not found:
-        return False
-
-    return True
-
-
-def _validate_signature(cert, signature, signed_data):
-    try:
-        signature = base64.b64decode(signature)
-        crypto.verify(cert, signature, signed_data, 'sha1')
-    except crypto.Error as e:
-        raise VerificationError(e)
-
+def _validate_app_id(source, expected):
+    return source == expected
 
 def _validate_timestamp(timestamp):
-    dt = datetime.utcnow() - timestamp.replace(tzinfo=None)
+    ts = aniso8601.parse_datetime(timestamp)
+    dt = datetime.utcnow() - ts.replace(tzinfo=None)
+
     if abs(dt.total_seconds()) > 150:
-        raise VerificationError("Timestamp verification failed")
+        return False
+
+    return True
+
+# def _validate_cert(cert_url):
+#     cert_data = requests.get(cert_url)
+#     cert = crypto.load_certificate(crypto.FILETYPE_PEM, cert_data)
+
+#     not_after = cert.get_notAfter().decode('utf-8')
+#     not_after = datetime.strptime(not_after, '%Y%m%d%H%M%SZ')
+#     if datetime.utcnow() >= not_after:
+#         return False
+
+#     found = False
+#     for i in range(0, cert.get_extension_count()):
+#         extension = cert.get_extension(i)
+#         short_name = extension.get_short_name().decode('utf-8')
+#         value = str(extension)
+#         if 'subjectAltName' == short_name and 'DNS:echo-api.amazon.com' == value:
+#             found = True
+#             break
+
+#     if not found:
+#         return False
+
+#     return True
+
+
+# def _validate_signature(cert, signature, signed_data):
+#     try:
+#         signature = base64.b64decode(signature)
+#         crypto.verify(cert, signature, signed_data, 'sha1')
+#     except crypto.Error as e:
+#         raise VerificationError(e)
+
+
