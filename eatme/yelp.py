@@ -62,6 +62,8 @@ class Yelp(object):
     def run(self, term, location):
         response = self.search(term, location)
         businesses = response.get('businesses')
+        # import json
+        # print(json.dumps(businesses, indent=3))
 
         # get the top half:
         best_biz = businesses[0:int(len(businesses) / 2)]

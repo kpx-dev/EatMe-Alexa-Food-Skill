@@ -9,40 +9,80 @@ class VerificationError(Exception): pass
 
 kms = boto3.client('kms')
 
-def success(title, message, message_repeat=None, session_attributes={}, close=True):
-    speechlet = _speechlet(title=title, message=message, reprompt_text=message_repeat, should_end_session=close)
+def card(title, content, img=None):
+    if img:
+        card = _standard_card(title=title, content=content, small_img=img, large_img=img)
+    else:
+        card = _simple_card(title=title, content=content)
+
+    return card
+
+def success(speech_text, card=None, speech_text_reprompt=None, session_attributes={}):
+    speechlet = _speechlet(speech_text=speech_text, card=card, speech_text_reprompt=speech_text_reprompt)
 
     return _response(speechlet=speechlet)
 
-def error(title, message, message_repeat=None, session_attributes={}, close=True):
-    speechlet = _speechlet(title=title, message=message, reprompt_text=message_repeat, should_end_session=close)
+def error(title, message, small_img=None, large_img=None, message_repeat=None, session_attributes={}, close=True):
+    card = _standard_card(title=title, content=content, small_img=small_img, large_img=large_img)
+    speechlet = _speechlet(title=title, message=message, card=card, reprompt_text=message_repeat, should_end_session=close)
 
     return _response(speechlet=speechlet)
 
 def decrypt(key):
     return kms.decrypt(CiphertextBlob=b64decode(key))['Plaintext'].decode('utf-8')
 
-def _speechlet(title, message, reprompt_text=None, should_end_session=True, title_prefix='EatMe - '):
+def _simple_card(title, content):
+    return {
+        'type': 'Simple',
+        'title': title,
+        'content': content
+    }
+
+def _standard_card(title, content, small_img=None, large_img=None):
+    payload = {
+        'type': 'Standard',
+        'title': title,
+        'text': content
+    }
+
+    if small_img or large_img:
+        payload['image'] = {
+            # small 720w x 480h
+            # large 1200w x 800h
+            'smallImageUrl': small_img,
+            'largeImageUrl': large_img
+        }
+
+    return payload
+
+
+def _link_card():
+    return {
+        'type': 'LinkAccount'
+    }
+
+
+def _speechlet(speech_text, card=None, speech_text_reprompt=None):
     payload = {
         'outputSpeech': {
             'type': 'PlainText',
-            'text': message
+            'text': speech_text
         },
-        'card': {
-            'type': 'Simple',
-            'title': title_prefix + title,
-            'content': message
-        },
-        'shouldEndSession': should_end_session
+        'shouldEndSession': True
     }
 
-    if reprompt_text:
+    if card:
+        payload['card'] = card
+
+    if speech_text_reprompt:
         payload['reprompt'] = {
             'outputSpeech': {
                 'type': 'PlainText',
-                'text': reprompt_text
+                'text': speech_text_reprompt
             }
         }
+
+        payload['shouldEndSession'] = False
 
     return payload
 
