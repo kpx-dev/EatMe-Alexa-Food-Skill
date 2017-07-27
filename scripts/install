@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+app_name='eatme'
+region='us-east-1'
+
+pip install -r requirements-dev.txt
+python setup.py install
+pip install -e .

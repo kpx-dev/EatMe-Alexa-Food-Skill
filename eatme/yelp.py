@@ -8,28 +8,40 @@ class Yelp(object):
         self.app_id = app_id
         self.app_secret = app_secret
         self.app_access_token = app_access_token
-        self.host = 'https://api.yelp.com'
+        self.host = 'https://api.yelp.com/v3'
         self.default = {
             'radius': 16093,  # meters, 10 miles
             'limit': 40
         }
 
-    def request(self, path, url_params={}):
-        url = '{0}{1}'.format(self.host, path.encode('utf8'))
-        headers = {
-            'Authorization': 'Bearer %s' % self.app_access_token,
-        }
+    def request(self, path, params={}):
+        def _make_request(params):
+            url = '{}/{}'.format(self.host, path)
+            headers = { 'Authorization': 'Bearer {}'.format(self.app_access_token) }
 
-        print('Querying {0} ...'.format(url))
-        response = requests.request('GET', url, headers=headers,
-                                    params=url_params)
+            return requests.get(url=url, headers=headers, params=params)
 
-        return response.json()
+        res = _make_request(params=params)
+
+        # check for expired access token:
+        if res.status_code == 401:
+            print('Yelp token expired....')
+            auth_url = 'https://api.yelp.com/oauth2/token'
+            auth_params = {
+                'grant_type': 'client_credentials',
+                'client_id': self.app_id,
+                'client_secret': self.app_secret
+            }
+            auth_res = requests.post(url=auth_url, data=auth_params).json()
+            self.app_access_token = auth_res.get('access_token')
+            res = _make_request(params=params)
+
+        return res.json()
 
     def search(self, term, location):
-        path = '/v3/businesses/search'
+        path = 'businesses/search'
 
-        url_params = {
+        params = {
             'term': term.replace(' ', '+'),
             'location': location.replace(' ', '+'),
             'limit': self.default['limit'],
@@ -45,17 +57,16 @@ class Yelp(object):
             # deals - Businesses that offer Deals
         }
 
-        return self.request(path, url_params=url_params)
-
-    # def get_business(self, business_id):
-    #     return request('/v3/businesses/{}'.format(business_id))
+        return self.request(path, params=params)
 
     def run(self, term, location):
         response = self.search(term, location)
         businesses = response.get('businesses')
+        # import json
+        # print(json.dumps(businesses, indent=3))
 
         # get the top half:
-        best_biz = businesses[0:self.default['limit'] / 2]
+        best_biz = businesses[0:int(len(businesses) / 2)]
         random.shuffle(best_biz)
 
         return best_biz[0]
@@ -78,22 +89,22 @@ class Yelp(object):
 
     # def obtain_bearer_token(host, path):
     #     """Given a bearer token, send a GET request to the API.
-    #
+
     #     Args:
     #         host (str): The domain host of the API.
     #         path (str): The path of the API after the domain.
     #         url_params (dict): An optional set of query parameters in the request.
-    #
+
     #     Returns:
     #         str: OAuth bearer token, obtained using client_id and client_secret.
-    #
+
     #     Raises:
     #         HTTPError: An error occurs from the HTTP request.
     #     """
     #     url = '{0}{1}'.format(host, quote(path.encode('utf8')))
     #     assert CLIENT_ID, "Please supply your client_id."
     #     assert CLIENT_SECRET, "Please supply your client_secret."
-        # GRANT_TYPE = 'client_credentials'
+    #     GRANT_TYPE = 'client_credentials'
 
     #     data = urlencode({
     #         'client_id': CLIENT_ID,

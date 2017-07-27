@@ -1,0 +1,71 @@
+{
+  "intents": [
+    {
+      "name": "AMAZON.CancelIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.HelpIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.StopIntent",
+      "samples": []
+    },
+    {
+      "name": "EatMeIntent",
+      "samples": [
+        "recommend in westminster california",
+        "where to eat",
+        "for a place to eat",
+        "random",
+        "eat me",
+        "find me a random place to eat",
+        "random near {Location}"
+      ],
+      "slots": [
+        {
+          "name": "Location",
+          "type": "AMAZON.US_CITY",
+          "samples": [
+            "{Location}"
+          ]
+        }
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "Elicit.Intent-EatMeIntent.IntentSlot-Location",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "Please tell me your city"
+        }
+      ]
+    }
+  ],
+  "dialog": {
+    "version": "1.0",
+    "intents": [
+      {
+        "name": "EatMeIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "Location",
+            "type": "AMAZON.US_CITY",
+            "elicitationRequired": true,
+            "confirmationRequired": false,
+            "prompts": {
+              "elicit": "Elicit.Intent-EatMeIntent.IntentSlot-Location"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

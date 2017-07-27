@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+app_name='eatme'
+aws_region=us-east-1
+s3_bucket=knn-lambda-us-east-1
+
+rm -rf dist
+
+# compile packages under Linux env
+docker build -t $app_name .
+docker run -v "$PWD":/home $app_name
+
+mkdir -p dist/$app_name
+
+cp $app_name.py dist/app.py
+cp -R $app_name/ dist/$app_name/
+cp -R $app_name/$app_name.yml dist/
+
+# build
+aws cloudformation package --template-file dist/$app_name.yml --output-template-file dist/deploy.yml --s3-bucket $s3_bucket --s3-prefix $app_name --region $aws_region
+
+# deploy
+aws cloudformation deploy --template-file dist/deploy.yml --stack-name $app_name --region $aws_region --capabilities CAPABILITY_IAM

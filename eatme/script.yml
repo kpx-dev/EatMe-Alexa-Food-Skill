@@ -9,9 +9,17 @@ help: |
 
 zip: What's your current zip code?
 
-answer: |
-  Try {{ name }} with {{ stars }} stars, {{ reviews }} reviews, about {{ miles }} miles.
-  Again, it's {{ name }}, {{ address }}. Open Alexa App to see address again. Say next for next random restaurant.
+answer_speech: |
+  Try {name} with {stars} stars, {reviews} reviews, about {miles} miles.
+  Again, it's {name}. Open Alexa App for address.
+
+answer_card_title: |
+  Try {name} ({rating} stars, {review} reviews)
+
+answer_card_content: |
+  EatMe recommends {name}!
+
+  Address: {address}
 
 answer_repeat: |
   Say next for next random restaurant, or stop to end.
