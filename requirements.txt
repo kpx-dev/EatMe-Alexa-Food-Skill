@@ -1,5 +1,4 @@
 requests==2.18.1
 boto3==1.4.4
 PyYAML==3.12
-pyOpenSSL==17.0.0
 aniso8601==1.2.1

@@ -22,9 +22,11 @@ with Path.cwd().joinpath('eatme/script.yml').open() as f: script = yaml.load(f)
 
 
 def random(event):
-    device_id = event['context']['System']['device']['deviceId']
-    token = event['context']['System']['user']['permissions']['consentToken']
-    user_zipcode = zipcode(device_id=device_id, token=token) or '92683'
+    user_zipcode = '92683'
+    if 'context' in event:
+        device_id = event['context']['System']['device']['deviceId']
+        token = event['context']['System']['user']['permissions']['consentToken']
+        user_zipcode = zipcode(device_id=device_id, token=token) or user_zipcode
 
     yelp = Yelp(
         app_id=yelp_keys['app_id'],
