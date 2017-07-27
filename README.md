@@ -1,10 +1,10 @@
 # EatMe - Alexa Food Skill
 EatMe is an Alexa Food Skill that allow you to find good random place to eat near you, quickly. It's powered by Yelp.
 
-![test](assets/eatme_logo_108.png)
+![logo](assets/eatme_logo_108.png)
 
 ## Video Demo
-[![EatMe Demo ](http://img.youtube.com/vi/CJoA8alJ-K0/0.jpg)](http://www.youtube.com/watch?v=CJoA8alJ-K0)
+[![EatMe Demo](http://img.youtube.com/vi/CJoA8alJ-K0/0.jpg)](http://www.youtube.com/watch?v=CJoA8alJ-K0)
 
 ## Alexa Commands
 
@@ -23,7 +23,7 @@ Ste A, Fountain Valley, CA 92708
   virtualenv --python=python3 env
 
   # activate virtualenv
-  . env/bin/activate
+  source env/bin/activate
 
   # install packages
   ./scripts/install
@@ -35,28 +35,28 @@ Ste A, Fountain Valley, CA 92708
   --form "client_secret=$CLIENT_SECRET" \
   "https://api.yelp.com/oauth2/token"
 
-  # copy the sample .env file
-  cp env-sample .env
-
-  # start the services
+  # start Lambda function locally
   ./scripts/start
 
-  # start ngrok to have an https endpoint
-  ngrok http 5000
-
-  # copy and paste that https url at Alexa Skill UI to test
-  # https://developer.amazon.com/edw/home.html#/skill/
 ```
 
 ## Deploy
 
-This service uses Zappa to deploy to AWS Lambda
+This service uses AWS SAM which uses CloudFormation to create resources.
 
 ```shell
-  # deploy to the dev environment
-  zappa deploy dev
+  # deploy
+  ./scripts/deploy
 
   # tail the log to debug
-  zappa tail dev
+  ./scripts/tail
+
+```
+
+## Encrypt Environment Keys
+
+```shell
+  # encrypt secret environment variable
+  ./scripts/encrypt "SECRET_VALUE"
 
 ```
