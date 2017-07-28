@@ -1,31 +1,28 @@
 welcome: |
   Eat Me will help you find a good random place to eat. You can say: Find me a random place to eat.
+  Please allow the skill to access your Postal Code in the Alexa app.
 
 welcome_repeat: |
-  You can also say: random.
+  You can also say: random
 
 help: |
-  Eat Me will help you find a good random place to eat. You can say: Alexa, ask Eat Me where to eat?
-
-zip: What's your current zip code?
+  Eat Me will help you find a good random place to eat.
+  To know your current location, please allow the skill to access your Postal Code in the Alexa app.
+  You can say: Alexa, ask Eat Me where to eat?
 
 answer_speech: |
   Try {name} with {stars} stars, {reviews} reviews, about {miles} miles.
-  Again, it's {name}. Open Alexa App for address.
+  Again, it's {name}. Open Alexa App for address, say next for random restaurant.
 
 answer_card_title: |
-  Try {name} ({rating} stars, {review} reviews)
+  Try {name} ({rating} stars)
 
 answer_card_content: |
-  EatMe recommends {name}!
+  EatMe recommends {name}, {review} reviews!
 
   Address: {address}
 
 answer_repeat: |
   Say next for next random restaurant, or stop to end.
-
-phone: What's your phone number?
-
-yelp_problem: Sorry, I'm having problem connecting to Yelp services. Please try again later.
 
 bye: Goodbye, bon appetit!

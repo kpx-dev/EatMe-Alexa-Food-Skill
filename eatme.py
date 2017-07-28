@@ -23,7 +23,9 @@ with Path.cwd().joinpath('eatme/script.yml').open() as f: script = yaml.load(f)
 
 def random(event):
     user_zipcode = '92683'
-    if 'context' in event:
+    device_id = 'Unknown'
+
+    if 'context' in event and 'consentToken' in event['context']['System']['user']['permissions']:
         device_id = event['context']['System']['device']['deviceId']
         token = event['context']['System']['user']['permissions']['consentToken']
         user_zipcode = zipcode(device_id=device_id, token=token) or user_zipcode
@@ -35,6 +37,7 @@ def random(event):
     )
 
     biz = yelp.run(term='restaurant', location=user_zipcode)
+    # convert meter to miles
     miles = int(biz['distance'] / 1609.344)
 
     answer = script['answer_speech'].format(
@@ -45,8 +48,8 @@ def random(event):
     )
     speech_text = answer.replace('&', 'and')
     address = ', '.join(biz['location']['display_address'])
-    card_title = script['answer_card_title'].format(name=biz['name'], rating=biz['rating'], review=biz['review_count'])
-    card_content = script['answer_card_content'].format(name=biz['name'], address=address)
+    card_title = script['answer_card_title'].format(name=biz['name'], rating=biz['rating'])
+    card_content = script['answer_card_content'].format(name=biz['name'], review=biz['review_count'] ,address=address)
 
     res_card = card(title=card_title, content=card_content, img=biz['image_url'])
 
@@ -61,8 +64,12 @@ def random(event):
     return success(speech_text=speech_text, card=res_card, speech_text_reprompt=script['answer_repeat'])
 
 
-def end():
+def end(event):
     return success(speech_text=script['bye'])
+
+
+def help(event):
+    return success(speech_text=script['help'])
 
 
 def on_session_started(event):
@@ -73,6 +80,10 @@ def on_launch(event):
     return success(speech_text=script['welcome'], speech_text_reprompt=script['welcome_repeat'])
 
 
+def on_session_ended(event):
+    return end(event)
+
+
 def on_intent(event):
     intent_name = event['request']['intent']['name']
 
@@ -80,18 +91,15 @@ def on_intent(event):
     if intent_name == "EatMeIntent":
         return random(event)
     elif intent_name == "AMAZON.HelpIntent":
-        return launch()
+        return help(event)
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
-        return end()
+        return end(event)
     else:
         raise ValueError("Invalid intent")
 
 
-def on_session_ended(event):
-    return end()
-
-
 def main(event, context):
+    # print(event)
     request_timestamp = event['request']['timestamp']
 
     if not os.environ.get('DEBUG') and not validate_request(event, app_id=eatme_app_id, request_timestamp=request_timestamp):
