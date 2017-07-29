@@ -5,8 +5,9 @@ import os
 import yaml
 
 from eatme.yelp import Yelp
-from eatme.core import success, decrypt, validate_request, card, zipcode, track
+from eatme.core import success, decrypt, validate_request, card, zipcode, track_dynamodb, track_slack
 from pathlib import Path
+from datetime import datetime
 
 slack_webhook = decrypt(key=os.environ.get('SLACK_WEBHOOK'))
 yelp_keys = {
@@ -53,7 +54,7 @@ def random(event):
 
     res_card = card(title=card_title, content=card_content, img=biz['image_url'])
 
-    track(
+    track_dynamodb(
         table=table,
         event=event,
         device_id=device_id,
@@ -98,12 +99,20 @@ def on_intent(event):
         raise ValueError("Invalid intent")
 
 
+
 def main(event, context):
-    # print(event)
+    track_slack(webhook=slack_webhook, message='```New request on {}: \n {}```'.format(
+        datetime.now().isoformat(),
+        json.dumps(event, indent=3)))
+
     request_timestamp = event['request']['timestamp']
 
     if not os.environ.get('DEBUG') and not validate_request(event, app_id=eatme_app_id, request_timestamp=request_timestamp):
         raise ValueError("Failed validation")
+
+    # must have device permission before continue:
+    if 'consentToken' not in event['context']['System']['user']['permissions']:
+        return success(speech_text=script['require_permission'])
 
     # if event['session']['new']:
     #     return on_session_started(event)

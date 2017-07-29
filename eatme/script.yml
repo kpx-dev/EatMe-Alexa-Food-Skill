@@ -1,9 +1,12 @@
 welcome: |
   Eat Me will help you find a good random place to eat. You can say: Find me a random place to eat.
-  Please allow the skill to access your Postal Code in the Alexa app.
 
 welcome_repeat: |
   You can also say: random
+
+require_permission: |
+  Eat Me skill requires permission to access your current location.
+  Please open Alexa app, under Manage Permission, allow it to access Postal Code.
 
 help: |
   Eat Me will help you find a good random place to eat.

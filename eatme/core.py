@@ -109,7 +109,7 @@ def zipcode(device_id, token):
         return None
 
 
-def track(table, event, business, zipcode='0', **kwargs):
+def track_dynamodb(table, event, business, zipcode='0', **kwargs):
     try:
         item = {
             'request_id': event['request']['requestId'],
@@ -128,6 +128,16 @@ def track(table, event, business, zipcode='0', **kwargs):
         return table.put_item(Item=item)
     except Exception as e:
         print(e)
+
+
+def track_slack(webhook, message):
+    payload = {'text': message}
+    try:
+        res = requests.post(url=webhook, data=json.dumps(payload))
+        if not res.ok:
+            print('problem tracking to Slack', res.text)
+    except Exception as e:
+        print('problem tracking to Slack', e)
 
 def validate_request(event, app_id, request_timestamp):
     if _validate_app_id(source=event['session']['application']['applicationId'], expected=app_id) and _validate_timestamp(timestamp=request_timestamp):
