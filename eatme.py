@@ -70,7 +70,7 @@ def end(event):
 
 
 def help(event):
-    return success(speech_text=script['help'])
+    return success(speech_text=script['help'], speech_text_reprompt=script['help_repeat'])
 
 
 def on_session_started(event):

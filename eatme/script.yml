@@ -13,6 +13,9 @@ help: |
   To know your current location, please allow the skill to access your Postal Code in the Alexa app.
   You can say: Alexa, ask Eat Me where to eat?
 
+help_repeat: |
+  To get started, you can say: Alexa, ask Eat Me where to eat?
+
 answer_speech: |
   Try {name} with {stars} stars, {reviews} reviews, about {miles} miles.
   Again, it's {name}. Open Alexa App for address, say next for random restaurant.
