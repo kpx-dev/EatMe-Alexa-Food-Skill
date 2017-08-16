@@ -111,7 +111,8 @@ def main(event, context):
         raise ValueError("Failed validation")
 
     # must have device permission before continue:
-    if 'consentToken' not in event['context']['System']['user']['permissions']:
+    if 'permissions' not in event['context']['System']['user'] or
+        'consentToken' not in event['context']['System']['user']['permissions']:
         return success(speech_text=script['require_permission'])
 
     # if event['session']['new']:
