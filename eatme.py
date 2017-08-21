@@ -37,7 +37,8 @@ def random(event):
         app_access_token=yelp_keys['app_access_token']
     )
 
-    biz = yelp.run(term='restaurant', location=user_zipcode)
+    biz = yelp.run(term='food', location=user_zipcode)
+
     # convert meter to miles
     miles = int(biz['distance'] / 1609.344)
 
@@ -99,7 +100,6 @@ def on_intent(event):
         raise ValueError("Invalid intent")
 
 
-
 def main(event, context):
     track_slack(webhook=slack_webhook, message='```New request on {}: \n {}```'.format(
         datetime.now().isoformat(),
@@ -111,8 +111,7 @@ def main(event, context):
         raise ValueError("Failed validation")
 
     # must have device permission before continue:
-    if 'permissions' not in event['context']['System']['user'] or
-        'consentToken' not in event['context']['System']['user']['permissions']:
+    if 'permissions' not in event['context']['System']['user'] or 'consentToken' not in event['context']['System']['user']['permissions']:
         return success(speech_text=script['require_permission'])
 
     # if event['session']['new']:

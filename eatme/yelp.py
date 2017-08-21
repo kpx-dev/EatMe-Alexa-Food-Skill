@@ -10,8 +10,8 @@ class Yelp(object):
         self.app_access_token = app_access_token
         self.host = 'https://api.yelp.com/v3'
         self.default = {
-            'radius': 16093,  # meters, 10 miles
-            'limit': 40
+            'radius': 4828,  # meters, 3 miles
+            'limit': 50
         }
 
     def request(self, path, params={}):
@@ -42,15 +42,16 @@ class Yelp(object):
         path = 'businesses/search'
 
         params = {
-            'term': term.replace(' ', '+'),
-            'location': location.replace(' ', '+'),
+            'term': term,
+            'location': location,
             'limit': self.default['limit'],
             'radius': self.default['radius'],
             'open_now': True,
             'categories': 'food',
             'sort_by': 'rating' #  best_match, rating, review_count or distance
+            # 'sort_by': 'review_count', #  best_match, rating, review_count or distance
             # 'attributes': 'cashback'
-            # hot_and_new - Hot and New businesses
+            # 'hot_and_new': True, # - Hot and New businesses
             # request_a_quote - Businesses have the Request a Quote feature
             # waitlist_reservation - Businesses that have an online waitlist
             # cashback - Businesses that offer Cash Back
@@ -60,61 +61,17 @@ class Yelp(object):
         return self.request(path, params=params)
 
     def run(self, term, location):
+        min_rating = 4
+        max_try = 10
+        current_try = 0
+
         response = self.search(term, location)
         businesses = response.get('businesses')
-        # import json
-        # print(json.dumps(businesses, indent=3))
 
-        # get the top half:
-        best_biz = businesses[0:int(len(businesses) / 2)]
-        random.shuffle(best_biz)
+        while True:
+            current_try += 1
+            random_biz_index = random.randint(0, len(businesses) - 1)
+            biz = businesses[random_biz_index]
 
-        return best_biz[0]
-        # random.shuffle(businesses)
-        # return businesses[0]
-
-        # if not businesses:
-        #     print(u'No businesses for {0} in {1} found.'.format(term, location))
-        #     return
-        #
-        # business_id = businesses[0]['id']
-        #
-        # print(u'{0} businesses found, querying business info ' \
-        #     'for the top result "{1}" ...'.format(
-        #         len(businesses), business_id))
-        # response = get_business(bearer_token, business_id)
-        #
-        # print(u'Result for business "{0}" found:'.format(business_id))
-        # pprint.pprint(response, indent=2)
-
-    # def obtain_bearer_token(host, path):
-    #     """Given a bearer token, send a GET request to the API.
-
-    #     Args:
-    #         host (str): The domain host of the API.
-    #         path (str): The path of the API after the domain.
-    #         url_params (dict): An optional set of query parameters in the request.
-
-    #     Returns:
-    #         str: OAuth bearer token, obtained using client_id and client_secret.
-
-    #     Raises:
-    #         HTTPError: An error occurs from the HTTP request.
-    #     """
-    #     url = '{0}{1}'.format(host, quote(path.encode('utf8')))
-    #     assert CLIENT_ID, "Please supply your client_id."
-    #     assert CLIENT_SECRET, "Please supply your client_secret."
-    #     GRANT_TYPE = 'client_credentials'
-
-    #     data = urlencode({
-    #         'client_id': CLIENT_ID,
-    #         'client_secret': CLIENT_SECRET,
-    #         'grant_type': GRANT_TYPE,
-    #     })
-    #     headers = {
-    #         'content-type': 'application/x-www-form-urlencoded',
-    #     }
-    #     response = requests.request('POST', url, data=data, headers=headers)
-    #     bearer_token = response.json()['access_token']
-    #     print(bearer_token)
-    #     return bearer_token
+            if float(biz['rating']) >= min_rating or current_try > max_try:
+                return biz
